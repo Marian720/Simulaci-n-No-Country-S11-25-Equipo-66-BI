@@ -45,6 +45,10 @@ Definición de indicadores ESG medibles y comparables.
 Generación de reportes exportables o descargables.
 📦 Entregables esperados
 
+💡 Consejo: Usa títulos (#, ##), listas (*) y enlaces [texto](url) para estructurar el contenido
+
+📝 Ejemplos: Introducción, Objetivos, Arquitectura, Setup, Enlaces a recursos
+
 Documento de definición de métricas financieras y ESG.
 Modelo de datos consolidado con fuentes simuladas.
 Dashboard interactivo con paneles financieros y ambientales.
