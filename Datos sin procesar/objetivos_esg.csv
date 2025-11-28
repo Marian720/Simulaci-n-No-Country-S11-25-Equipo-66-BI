@@ -1,0 +1,19 @@
+﻿id_objetivo,categoria_esg,kpi_nombre,descripcion_objetivo,unidad_medida,valor_objetivo,anio_objetivo,valor_ejemplo
+1,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.3,2023,0.25
+2,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,20.0,2023,21.31
+3,Social,Rotación,Tasa de rotación anual máxima,%,0.15,2023,0.003
+4,Social,Equidad,Mujeres en liderazgo,Cantidad,8.0,2023,6
+5,Gobernanza,Capacitación Ética,Porcentaje empleados capacitados,%,80.0,2023,75.803
+6,Financiero,Margen Neto,Margen neto objetivo,%,0.25,2023,0.028
+7,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.4,2024,0.301
+8,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,18.0,2024,16.74
+9,Social,Rotación,Máxima rotación anual,%,0.12,2024,0.054
+10,Social,Equidad,Mujeres en liderazgo,Cantidad,10.0,2024,10
+11,Gobernanza,Capacitación Ética,Porcentaje empleados capacitados,%,90.0,2024,5.304
+12,Financiero,Margen Neto,Margen objetivo,%,0.3,2024,0.249
+13,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.5,2025,0.093
+14,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,15.0,2025,15.75
+15,Social,Rotación,Rotación anual máxima,%,0.1,2025,0.091
+16,Social,Equidad,Mujeres en liderazgo,Cantidad,12.0,2025,12
+17,Gobernanza,Capacitación Ética,Porcentaje capacitados,%,95.0,2025,47.372
+18,Financiero,Margen Neto,Meta de margen neto,%,0.35,2025,0.339
