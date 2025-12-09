@@ -3,6 +3,27 @@
 
 ---
 
+## 👥 Integrantes del Equipo
+
+- **Daniela Artica** — Analista de Datos  
+- **Yira Marchitelli** — Administradora de Base de Datos (DBA)  
+- **Marianela Pi** — Analista de Inteligencia de Negocios (BI Analyst)
+
+---
+
+## 🛠️ Herramientas y Tecnologías Utilizadas
+
+- **Datos y Desarrollo:** Python, Jupyter Notebook, Google Colab  
+- **Bases de Datos:** Supabase  
+- **Análisis y Visualización:** Power BI, Excel  
+- **Diseño:** Illustrator  
+- **Asistentes y Herramientas de IA:** ChatGPT, Gemini  
+- **Gestión del Proyecto:** Jira, Notion  
+- **Comunicación y Colaboración:** Discord  
+- **Control de Versiones:** GitHub
+
+---
+
 ## 📋 Contexto del Proyecto (Consigna)
 
 ### Necesidad del Cliente
