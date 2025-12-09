@@ -85,3 +85,92 @@ Para cumplir con el requerimiento funcional de "detectar desviaciones", el siste
 * **Visualización:** El dashboard resaltará automáticamente (en rojo/verde) cuando un KPI se desvíe de su meta establecida (ej. si la Tasa de Reciclaje cae por debajo del 40%).
 
 ---
+
+# 4\. Arquitectura del Modelo de Datos
+
+El modelo de datos del proyecto Sustainable Growth Monitor se diseñó siguiendo un enfoque estrella (Star Schema), optimizado para análisis de Business Intelligence. La arquitectura está compuesta por:
+
+## 4.1. Una dimensión temporal limpia (dim_tiempo)
+
+Proporciona la granularidad diaria y los atributos necesarios para realizar:
+
+- agregaciones por trimestre,
+- análisis por año, mes o día,
+- cálculo de correlaciones temporales.
+
+La clave primaria **id_fecha** se utiliza como punto de unión entre todas las tablas de hechos. Esta dimensión **no permite valores nulos en ninguno de sus campos**, ya que la estructura temporal debe ser completamente consistente para evitar errores en correlaciones y cálculos derivados.
+
+## 4.2. Cuatro tablas de hechos operativas
+
+Cada área del negocio se modela de forma independiente según su naturaleza:
+
+**• fact_finanzas**
+
+Registra ingresos y costos diarios. Permite datos incompletos porque simula escenarios reales donde la información financiera puede contener errores o ausencias de valores.
+
+**Campos que permiten nulos:**
+
+- **ingresos**: se habilitó para representar registros contables faltantes o inconsistencias operativas.
+- **costos**: _no_ admite nulos para garantizar un mínimo de completitud en la información financiera.
+
+**• fact_ambiental**
+
+Contiene consumo energético, agua, residuos y huella de carbono. También admite nulos, reflejando la variabilidad y calidad irregular típica de mediciones ambientales.
+
+**Campos que permiten nulos:**
+
+- **consumo_agua_litros**: simula sensores fuera de línea o fallas en medición.
+- **huella_carbono_tCO2e**: permite nulos para reflejar cálculos incompletos o no reportados.
+
+Los demás campos son obligatorios para asegurar un mínimo de coherencia ambiental diaria.
+
+**• fact_rrhh**
+
+Integra indicadores sociales: total de empleados, entradas, salidas, liderazgo y satisfacción. Representa el componente "S" de ESG.
+
+**Campos que permiten nulos:**
+
+- **satisfaccion_empleados**: se permite para simular encuestas no respondidas o periodos sin medición.
+
+Todos los demás campos son obligatorios para reflejar consistencia en las métricas de personal.
+
+**• fact_gobernanza_trimestral**
+
+Modelada con granularidad trimestral, dado que las prácticas de gobernanza no ocurren diariamente. Su unión a _dim_tiempo_ se hace mediante una fecha representativa del trimestre (por ejemplo, el último día del trimestre).
+
+**Campos que permiten nulos:**
+
+- **pct_capacitacion_etica**: puede faltar en algunos trimestres para simular reportes incompletos.
+
+Los demás campos son obligatorios porque su ausencia comprometería la interpretación de auditorías y del estado del canal de denuncias.
+
+## 4.3. Una tabla de catálogo independiente (objetivos_esg)
+
+Esta tabla no forma parte del modelo relacional analítico, sino que funciona como un repositorio descriptivo de KPIs:
+
+- Nombre del indicador
+- Unidad de medida
+- Definición
+- Valor objetivo
+- Año objetivo
+- Ejemplo de valor típico
+
+No requiere relaciones físicas, ya que su uso es conceptual y su contenido permite que se consuma desde la capa BI para comparar valores reales vs metas.
+
+**Campos que permiten nulos:**
+
+- **descripcion_objetivo**, **unidad_medida** y **valor_ejemplo**, ya que algunos objetivos pueden no requerir detalles adicionales o formatos específicos.
+
+Existe como tabla independiente porque no participa en joins operativos, sino en la interpretación de KPIs.
+
+## 4.4. Justificación de la arquitectura
+
+Este diseño:
+
+- Mantiene el modelo simple y entendible para analistas.
+- Facilita cálculos temporales y correlaciones.
+- Permite cargar datos imperfectos para simular ambientes reales.
+- Reduce la rigidez del esquema permitiendo nulos en las tablas de hechos solo en campos donde los errores son realistas.
+- Ofrece una tabla auxiliar (_objetivos_esg_) que sirve a la capa BI sin sobrecargar el esquema relacional.
+
+
