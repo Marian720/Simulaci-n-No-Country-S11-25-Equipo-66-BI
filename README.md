@@ -86,11 +86,11 @@ Para cumplir con el requerimiento funcional de "detectar desviaciones", el siste
 
 ---
 
-# 4\. Arquitectura del Modelo de Datos
+### 4\. Arquitectura del Modelo de Datos
 
 El modelo de datos del proyecto Sustainable Growth Monitor se diseñó siguiendo un enfoque estrella (Star Schema), optimizado para análisis de Business Intelligence. La arquitectura está compuesta por:
 
-## 4.1. Una dimensión temporal limpia (dim_tiempo)
+#### 4.1. Una dimensión temporal limpia (dim_tiempo)
 
 Proporciona la granularidad diaria y los atributos necesarios para realizar:
 
@@ -100,7 +100,7 @@ Proporciona la granularidad diaria y los atributos necesarios para realizar:
 
 La clave primaria **id_fecha** se utiliza como punto de unión entre todas las tablas de hechos. Esta dimensión **no permite valores nulos en ninguno de sus campos**, ya que la estructura temporal debe ser completamente consistente para evitar errores en correlaciones y cálculos derivados.
 
-## 4.2. Cuatro tablas de hechos operativas
+#### 4.2. Cuatro tablas de hechos operativas
 
 Cada área del negocio se modela de forma independiente según su naturaleza:
 
@@ -144,7 +144,7 @@ Modelada con granularidad trimestral, dado que las prácticas de gobernanza no o
 
 Los demás campos son obligatorios porque su ausencia comprometería la interpretación de auditorías y del estado del canal de denuncias.
 
-## 4.3. Una tabla de catálogo independiente (objetivos_esg)
+#### 4.3. Una tabla de catálogo independiente (objetivos_esg)
 
 Esta tabla no forma parte del modelo relacional analítico, sino que funciona como un repositorio descriptivo de KPIs:
 
@@ -163,7 +163,7 @@ No requiere relaciones físicas, ya que su uso es conceptual y su contenido perm
 
 Existe como tabla independiente porque no participa en joins operativos, sino en la interpretación de KPIs.
 
-## 4.4. Justificación de la arquitectura
+#### 4.4. Justificación de la arquitectura
 
 Este diseño:
 
@@ -173,4 +173,180 @@ Este diseño:
 - Reduce la rigidez del esquema permitiendo nulos en las tablas de hechos solo en campos donde los errores son realistas.
 - Ofrece una tabla auxiliar (_objetivos_esg_) que sirve a la capa BI sin sobrecargar el esquema relacional.
 
+### 5\. Fuentes Simuladas y Estrategias de Generación
 
+Este apartado describe detalladamente cómo fueron generadas las fuentes de datos que conforman el modelo. Incluye la lógica aplicada, el propósito de cada conjunto de datos y las técnicas utilizadas para simular escenarios reales con datos imperfectos.
+
+#### 5.1. Descripción General del Proceso
+
+Los datos del proyecto fueron generados mediante un script en Python diseñado específicamente para:
+
+- Crear fuentes simuladas con comportamientos realistas.
+- Representar dinámicas financieras, ambientales, sociales y de gobernanza.
+- Incluir **errores controlados** (nulos, duplicados y outliers) para evaluar limpieza, validaciones y análisis.
+- Mantener **coherencia estructural** con la arquitectura del modelo, especialmente respecto a:  
+  - La **dimensión temporal limpia**.
+  - La granularidad diaria y trimestral definida en las tablas de hechos.
+
+El proceso produce **6 archivos CSV**, los cuales fueron posteriormente cargados en la base de datos.
+
+#### 5.2. Generación de la tabla dim_tiempo (Fuente limpia)
+
+- Se generaron todas las fechas desde **01/01/2023 hasta 31/12/2025**.
+- No contiene errores, nulos ni outliers.
+- Incluye atributos derivados: trimestre, mes, nombres y día de la semana.
+- Esta tabla es el eje temporal del modelo y la única diseñada para ser perfectamente limpia.
+
+**Motivo de limpieza absoluta:  
+**Una dimensión temporal debe ser completa y estable, ya que todas las tablas fact dependen de una fecha válida.
+
+#### 5.3. Generación de la tabla fact_finanzas
+
+Incluye métricas diarias de ingresos y costos.
+
+**Lógica de simulación:**
+
+- Ingresos: 10,000-50,000.
+- Costos: 5,000-25,000.
+
+**Errores introducidos:**
+
+- **30 valores nulos en ingresos** → porque en esta tabla se permite nulos en este campo.
+- **3 ingresos extremadamente altos (9,999,999)** → simulación de outliers.
+- **10 registros duplicados** → simulan fallos típicos de exportación o ETL.
+
+**Granularidad:**
+
+- **Diaria**, como establece la arquitectura general del modelo.
+
+#### 5.4. Generación de la tabla fact_ambiental
+
+Incluye consumo energético, agua, residuos y emisiones.
+
+**Lógica de simulación:**
+
+- Consumo kWh: 1,000-3,000.
+- Consumo de agua: 500-1,500 L.
+- Residuos totales: 50-200 kg.
+- Reciclaje: 10%-70% del total.
+- Huella de carbono derivada del consumo energético.
+
+**Errores introducidos:**
+
+- **25 valores nulos en consumo_agua_litros**.
+- **10 valores nulos en huella_carbono_tCO2e**.
+- No se generaron duplicados, simulando una medición más estable.
+
+**Justificación:  
+**Representan sensores fuera de línea, transmisiones fallidas y reportes incompletos.
+
+**Granularidad:**
+
+- **Diaria**.
+
+#### 5.5. Generación de la tabla fact_rrhh
+
+Incluye métricas sociales: empleados totales, rotación, liderazgo y satisfacción.
+
+**Lógica de simulación:**
+
+- Total empleados: 40-60.
+- Entradas, bajas y liderazgo generados con rangos realistas.
+- Satisfacción: 6.5-8.5.
+
+**Errores introducidos (alineados con el modelo del punto 4):**
+
+- **30 valores nulos en satisfacción_empleados** (este campo sí permite nulos).
+- **15 registros duplicados** → simulan errores comunes en RRHH.
+
+**Granularidad:**
+
+- **Diaria**.
+
+#### 5.6. Generación de la tabla fact_gobernanza_trimestral
+
+Esta tabla opera con **granularidad trimestral**, tal como especifica la arquitectura.
+
+**Lógica de simulación:**
+
+- Se utiliza **una fecha representativa por trimestre** (fin del trimestre).
+- Métricas:
+  - % capacitación ética (70%-95%)
+  - Auditorías internas (1-2)
+  - Canal de denuncias (activo/inactivo)
+
+**Errores introducidos:**
+
+- **2 valores nulos** en capacitación ética.
+
+**Justificación de granularidad:  
+**Los indicadores de gobernanza no se reportan diariamente, sino en ciclos más amplios.
+
+#### 5.7. Tabla objetivos_esg
+
+Es un **catálogo corporativo de KPIs**, no un hecho ni una dimensión operativa.
+
+**Estructura simulada:  
+**Incluye objetivos 2023-2025 para categorías:
+
+- Ambiental
+- Social
+- Gobernanza
+- Financiero
+
+Cada objetivo contiene:
+
+- Unidad de medida
+- Valor objetivo
+- Descripción
+- Valor ejemplo
+
+#### 5.8. Consistencia global del diseño
+
+- Todas las tablas fact comparten **id_fecha** para permitir joins consistentes.
+- Gobernanza trabaja con granularidad trimestral, como se definió en el modelo.
+- Los errores simulados coinciden con las reglas y nulos permitidos del punto 4.
+- Todas las tablas fueron generadas en **CSV** para facilitar la carga y validaciones posteriores.
+
+### 6\. Proceso de Carga y Validación de Datos en la Base
+
+#### 6.1. Carga de datos en Supabase
+
+La carga de los datos simulados se realizó desde **WSL (Ubuntu en Windows)** para disponer de herramientas nativas de PostgreSQL y facilitar la interacción con Supabase.
+
+Los archivos CSV se encontraban almacenados en el sistema Windows y fueron accedidos desde WSL mediante su ruta equivalente en /mnt/c/. Antes de iniciar la carga, se verificó la presencia de los seis archivos correspondientes a las tablas del modelo de datos:  
+**dim_tiempo**, **fact_finanzas**, **fact_ambiental**, **fact_rrhh**, **fact_gobernanza_trimestral** y **objetivos_esg**.
+
+Para automatizar el proceso y asegurar uniformidad en la ingestión, se creó un script de importación que recorre cada archivo y lo carga en su tabla correspondiente dentro del esquema **sustainable_growth** en Supabase. Este script fue almacenado en la carpeta designada para procesos de carga dentro del directorio de trabajo del proyecto.
+
+La importación se llevó a cabo utilizando el cliente psql desde WSL, conectándose al servidor PostgreSQL gestionado por Supabase y ejecutando la instrucción necesaria para copiar cada archivo hacia su tabla correspondiente.
+
+Durante el proceso se validó que:
+
+- Cada tabla recibiera la cantidad de registros prevista.
+- No se presentaran errores relacionados con tipos de datos o formato.
+- Los nulos y duplicados intencionales definidos en la generación de los datos fueran aceptados correctamente según los permisos del esquema.
+- La tabla **dim_tiempo**, al ser la única fuente completamente limpia, se cargara sin inconsistencias.
+
+Al finalizar, todas las tablas fueron cargadas exitosamente, con los volúmenes esperados y sin errores críticos, dejando la base lista para las validaciones posteriores descritas en los siguientes apartados.
+
+#### 6.2. Validación técnica posterior a la carga
+
+Se verificaron las siguientes condiciones estructurales:
+
+- **Integridad referencial:  
+    **Todas las tablas fact enlazan correctamente a dim_tiempo mediante id_fecha sin producir errores de clave foránea.
+- **Índices funcionales:  
+    **Se validó el correcto funcionamiento de los índices creados en cada tabla fact para consultas por fecha.
+- **Consistencia de granularidad:**
+  - Tablas financieras, ambientales y de RRHH: registros diarios.
+  - Gobernanza: registros trimestrales con una fecha representativa válida en dim_tiempo.
+
+#### 6.3. Manejo de datos imperfectos
+
+Los valores nulos, duplicados y outliers se **mantuvieron tal como fueron generados**, ya que forman parte del diseño de simulación del proyecto.
+
+Desde la perspectiva del DBA:
+
+- No se corrigieron datos en la base.
+- La estructura permite nulos y duplicados sin comprometer la integridad.
