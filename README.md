@@ -197,6 +197,7 @@ Este diseño:
 
 #### 4.5. Diagrama ER en Supabase
 
+![Diagrama ER](./dba/assets/diagrama-er.svg)
 
 ### 5\. Fuentes Simuladas y Estrategias de Generación
 
