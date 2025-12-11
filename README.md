@@ -106,8 +106,9 @@ Para cumplir con el requerimiento funcional de "detectar desviaciones", el siste
 * **Visualización:** El dashboard resaltará automáticamente (en rojo/verde) cuando un KPI se desvíe de su meta establecida (ej. si la Tasa de Reciclaje cae por debajo del 40%).
 
 ---
+## 4\. Entregable 2 - Modelo de datos consolidado con fuentes simuladas
 
-### 4\. Arquitectura del Modelo de Datos
+**Arquitectura del Modelo de Datos**
 
 El modelo de datos del proyecto Sustainable Growth Monitor se diseñó siguiendo un enfoque estrella (Star Schema), optimizado para análisis de Business Intelligence. La arquitectura está compuesta por:
 
@@ -194,6 +195,9 @@ Este diseño:
 - Reduce la rigidez del esquema permitiendo nulos en las tablas de hechos solo en campos donde los errores son realistas.
 - Ofrece una tabla auxiliar (_objetivos_esg_) que sirve a la capa BI sin sobrecargar el esquema relacional.
 
+#### 4.5. Diagrama ER en Supabase
+
+
 ### 5\. Fuentes Simuladas y Estrategias de Generación
 
 Este apartado describe detalladamente cómo fueron generadas las fuentes de datos que conforman el modelo. Incluye la lógica aplicada, el propósito de cada conjunto de datos y las técnicas utilizadas para simular escenarios reales con datos imperfectos.
@@ -218,8 +222,8 @@ El proceso produce **6 archivos CSV**, los cuales fueron posteriormente cargados
 - Incluye atributos derivados: trimestre, mes, nombres y día de la semana.
 - Esta tabla es el eje temporal del modelo y la única diseñada para ser perfectamente limpia.
 
-**Motivo de limpieza absoluta:  
-**Una dimensión temporal debe ser completa y estable, ya que todas las tablas fact dependen de una fecha válida.
+**Motivo de limpieza absoluta:**
+Una dimensión temporal debe ser completa y estable, ya que todas las tablas fact dependen de una fecha válida.
 
 #### 5.3. Generación de la tabla fact_finanzas
 
@@ -258,8 +262,8 @@ Incluye consumo energético, agua, residuos y emisiones.
 - **10 valores nulos en huella_carbono_tCO2e**.
 - No se generaron duplicados, simulando una medición más estable.
 
-**Justificación:  
-**Representan sensores fuera de línea, transmisiones fallidas y reportes incompletos.
+**Justificación:**
+Representan sensores fuera de línea, transmisiones fallidas y reportes incompletos.
 
 **Granularidad:**
 
@@ -300,15 +304,15 @@ Esta tabla opera con **granularidad trimestral**, tal como especifica la arquite
 
 - **2 valores nulos** en capacitación ética.
 
-**Justificación de granularidad:  
-**Los indicadores de gobernanza no se reportan diariamente, sino en ciclos más amplios.
+**Justificación de granularidad:**
+Los indicadores de gobernanza no se reportan diariamente, sino en ciclos más amplios.
 
 #### 5.7. Tabla objetivos_esg
 
 Es un **catálogo corporativo de KPIs**, no un hecho ni una dimensión operativa.
 
-**Estructura simulada:  
-**Incluye objetivos 2023-2025 para categorías:
+**Estructura simulada:**
+Incluye objetivos 2023-2025 para categorías:
 
 - Ambiental
 - Social
@@ -355,10 +359,10 @@ Al finalizar, todas las tablas fueron cargadas exitosamente, con los volúmenes 
 
 Se verificaron las siguientes condiciones estructurales:
 
-- **Integridad referencial:  
-    **Todas las tablas fact enlazan correctamente a dim_tiempo mediante id_fecha sin producir errores de clave foránea.
-- **Índices funcionales:  
-    **Se validó el correcto funcionamiento de los índices creados en cada tabla fact para consultas por fecha.
+- **Integridad referencial:**
+Todas las tablas fact enlazan correctamente a dim_tiempo mediante id_fecha sin producir errores de clave foránea.
+- **Índices funcionales:** 
+Se validó el correcto funcionamiento de los índices creados en cada tabla fact para consultas por fecha.
 - **Consistencia de granularidad:**
   - Tablas financieras, ambientales y de RRHH: registros diarios.
   - Gobernanza: registros trimestrales con una fecha representativa válida en dim_tiempo.
@@ -371,3 +375,127 @@ Desde la perspectiva del DBA:
 
 - No se corrigieron datos en la base.
 - La estructura permite nulos y duplicados sin comprometer la integridad.
+
+### 7\. Limpieza de Datos
+
+A continuación, se detallarán las acciones y el razonamiento aplicado a cada una de las tablas fuente para garantizar la calidad, consistencia y fiabilidad de los datos utilizados en la construcción del dashboard de sostenibilidad. Cabe señalar que, inicialmente, se utilizó la data extraída mediante el script de conexión a la base de datos Supabase. Sin embargo, durante la fase de limpieza, se identificó que la tabla de dimensión de tiempo original presentaba un alcance temporal incompleto, lo cual generaría valores nulos críticos al intentar consolidar los datos de las tablas de hechos para los registros posteriores a esa fecha.
+
+Por ello, se reemplazaron las cinco tablas de hechos y la tabla dim_tiempo con los archivos CSV proporcionados directamente por la Administradora de la Base de Datos (DBA). Estos archivos fueron pre-validados para asegurar que la tabla dim_tiempo fuera completa y que la granularidad de las tablas de hechos fuera consistente con los requisitos del proyecto.
+
+Los pasos de limpieza y tratamiento de _outliers_ detallados en este documento se aplican exclusivamente a los archivos CSV proporcionados por la DBA a partir de esta fase.
+
+#### 7.1. Limpieza de la tabla dim_tiempo
+
+- **Estructura y consistencia:** La tabla se encontró consistente y bien estructurada, con 1096 registros que abarcaban el periodo de tiempo entre 2023-01-01 y 2025-12-31.
+- **Tratamiento de tipos de datos:** Se convirtió la columna fecha de tipo object a tipo datetime para permitir la verificación de la secuencia temporal (detección de días faltantes) y facilitar la agregación de datos a niveles mensuales y trimestrales en pasos posteriores.
+- **Verificación de secuencia:** Se verificó la secuencia de días para asegurar que la serie de tiempo estuviera completa y se pudiera alinear correctamente con las tablas de hechos.
+
+#### 7.2. Limpieza de la tabla finanzas
+
+- **Verificación de duplicados:** Se detectaron 10 registros duplicados en la columna id_fecha.
+
+Decisión: Estos registros se eliminaron debido a que su presencia duplicaría artificialmente las métricas de ingresos y costos, lo cual sesgaría el margen neto. Se optó por mantener la primera instancia de la fecha para preservar el registro válido original.
+
+- **Tratamiento de tipos de datos:** Se mantuvo la columna id_fecha como int64 para la relación con dim_tiempo. Se creó una columna auxiliar (fecha) convertida a datetime para los procesos de limpieza.
+- **Tratamiento de Valores Nulos:** Se detectaron 31 valores nulos en la columna ingresos.
+
+Decisión: Se imputaron los valores nulos con cero (0). En el contexto de datos diarios, se asumió que un valor nulo en ingresos representa un día en el que no se registró ninguna venta o ingreso, lo cual es un valor de hecho significativo.
+
+- **Tratamiento de Valores Atípicos (Outliers):** Se detectaron tres valores atípicos extremos en la columna ingresos mediante el método de rango intercuartílico (IQR) y visualización de diagramas de caja.
+
+Decisión: Se eliminaron los tres registros con valor 9,999,999.0 en la columna ingresos, dado que sesgarían drásticamente el cálculo de los KPIs y representaban menos del 0.5% de todo el dataset.
+
+#### 7.3 Limpieza de la tabla ambiental
+
+- **Verificación de duplicados:** Se confirmó que no había filas duplicadas, manteniendo un total de 1095 registros después de la limpieza.
+- **Tratamiento de valores nulos:** Se detectaron 25 registros nulos en la columna consumo_agua_litros y 10 registros nulos en la columna huella_carbono_tco2e.
+
+Decisión: Se aplicó interpolación lineal basada en la fecha para imputar los valores faltantes, dado que los valores nulos estaban distribuidos de forma aislada en una serie temporal diaria. La interpolación permite rellenar los huecos manteniendo la tendencia natural del consumo (energía y agua) y la huella de carbono, evitando la pérdida innecesaria de datos.
+
+- **Tratamiento de Valores Atípicos (Outliers):** Se detectó un solo valor atípico en la columna residuos_reciclados_kg mediante el método de rango intercuartílico (IQR) y visualización de diagramas de caja.
+
+Decisión: Se eliminó el registro que contenía el valor atípico, dado que este registro representa el 0.09% del conjunto de datos.
+
+#### 7.4. Limpieza de la tabla recursos humanos
+
+- **Verificación de duplicados:** Se encontraron 15 registros duplicados en la columna id_fecha.
+
+**Decisión:** Estos registros se eliminaron debido a que su presencia podría sesgar los KPIs de esa área. Se optó por mantener la primera instancia de la fecha para preservar el registro válido original.
+
+- **Tratamiento de Valores Nulos:** Se detectaron 31 valores nulos en la columna satisfaccion_empleados.
+
+**Decisión:** Se aplicó interpolación temporal basada en la fecha para imputar los valores faltantes, dado que la satisfacción de los empleados se trata de un indicador continuo y estable y los valores nulos estaban distribuidos de forma aislada en una serie temporal diaria.
+
+- **Tratamiento de Valores Atípicos (Outliers):** No se detectaron valores atípicos en ninguna de las columnas del dataset al implementar el método del rango intercuartílico (IQR) y elaboración de diagramas de caja.
+
+#### 7.5. Limpieza de la tabla gobernanza
+
+- **Verificación de duplicados:** Se confirmó que no había filas duplicadas, manteniendo un total de 12 registros después de la limpieza.
+- **Granularidad:** La tabla solo contiene 12 registros (12 trimestres). Esto hizo que el tratamiento de nulos fuera extremadamente sensible.
+- **Tratamiento de Valores Nulos:** Se detectaron 2 valores nulos en la columna pct_capacitacion_etica
+
+**Decisión:** Dada la baja cantidad de registros (12), eliminar 2 filas representaría una pérdida del 16% de los datos de la serie. Por ello, se aplicó interpolación lineal entre los valores conocidos más cercanos, evitando la interpolación temporal que asumiría continuidad en períodos no reportados.
+
+- **Tratamiento de Valores Atípicos (Outliers):** Se detectó un valor atípico en la columna pct_capacitacion_etica mediante el método de rango intercuartílico (IQR) y visualización de diagramas de caja.
+
+**Decisión:** Dado que los registros solo abarcan 12 trimestres se evaluó si es que ese valor atípico alteraba significativamente la media de los registros y se encontró que la diferencia era de 1.02 puntos porcentuales. Por ello, se decidió mantener dicho valor con la finalidad de mantener la integridad de la serie temporal de 12 trimestres y evitar introducir valores artificiales.
+
+#### 7.6. Limpieza de la tabla objetivos ESG
+
+- **Estandarización de Texto:** Se realizó una evaluación de coherencia y estandarización de texto en las columnas descriptivas **categoria_esg** y **kpi_nombre** para asegurar que los nombres de las categorías y KPIs sean uniformes para evitar errores al filtrar y agrupar datos en el _dashboard_.
+
+**Decisión:** Se confirmó la consistencia en la ortografía y el uso de mayúsculas/minúsculas en los nombres de las categorías (Ambiental, Social, Gobernanza, Financiero) y los nombres de los KPIs (Tasa Reciclaje, Rotación, Margen Neto, etc.).
+
+- **Eliminación de columnas auxiliares:** La columna **valor_ejemplo** fue eliminada debido a que no representaba datos reales medidos ni objetivos oficiales, sino valores referenciales que podrían generar confusión en el análisis.
+
+---
+
+## 8\. Entregable 3 - Implementación del Dashboard (Visualización)
+
+#### 8.1 Estrategia de Diseño y Navegación
+
+El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegación con un menú lateral fijo que permite el flujo fluido entre cuatro niveles de análisis. Se priorizó un diseño limpio (fondo blanco, tarjetas) y el uso semántico del color (Verde/Rojo) para alertas inmediatas.
+
+#### 8.2 Estructura del Informe
+
+- **Nivel 1: Resumen Ejecutivo (Tablero de Mando):**
+  - **Objetivo:** Ofrecer una visión holística inmediata.
+  - **Componentes Clave:** Consolida KPIs de Finanzas, Huella de Carbono, Satisfacción y Reciclaje. Incluye indicadores de variación interanual (YoY) y semáforos de cumplimiento de objetivos.
+  - **Análisis Destacado:** Un gráfico de dispersión (Scatter Plot) que cruza _Consumo Energético vs. Margen Neto_, evidenciando la correlación operativa.
+- **Nivel 2: Análisis Financiero (Profundidad):**
+  - **Objetivo:** Desglosar la rentabilidad.
+  - **Visuales:** Gráfico de cascada para entender la acumulación mensual del resultado y análisis de líneas para contrastar la rigidez de los costos operativos frente a la volatilidad de los ingresos.
+- **Nivel 3: Impacto ESG (Sostenibilidad):**
+  - **Objetivo:** Monitorear el desempeño no financiero.
+  - **Visuales:** Gráfico de "Dinámica de Rotación" (Barras) para validar la retención de talento y Gráfico de Anillo para monitorear la paridad de género en liderazgo.
+- **Nivel 4: Plan de Acción (Toma de Decisiones):**
+  - **Objetivo:** Traducir datos en estrategia.
+  - **Componentes:** Un resumen visual de Fortalezas, Riesgos y Alertas, junto con una proyección económica del impacto de las mejoras sugeridas.
+
+#### 8.3 Lógica de Negocio Aplicada (DAX)
+
+Se implementaron medidas de inteligencia de tiempo para calcular variaciones históricas (_Year-over-Year_) respetando la granularidad de los filtros. Se normalizaron unidades críticas (conversión de Kilos a Toneladas en Huella de Carbono) para asegurar la comparabilidad con los objetivos internacionales.
+
+---
+
+## 9\. Entregable 4 - Hallazgos, Conclusiones y Recomendaciones
+
+#### 9.1 Diagnóstico Integral del Negocio
+
+Tras el procesamiento y visualización de los datos modelados, se identificaron tres hallazgos estructurales que definen la situación actual de la empresa:
+
+- **Fragilidad Financiera por Costos Rígidos:** El análisis del año 2025 reveló una caída del **15% en el Margen Neto**. La visualización financiera demostró que, ante una contracción en las ventas, la estructura de costos operativos se mantuvo plana (fija), erosionando directamente la rentabilidad.
+- **Ineficiencia Energética (Crecimiento "Sucio"):** El análisis de correlación confirmó una relación directa y positiva entre el _Margen Neto_ y el _Consumo Energético_. Actualmente, para aumentar la rentabilidad, la empresa requiere aumentar proporcionalmente su consumo de recursos, lo que indica una falta de eficiencia tecnológica.
+- **Resiliencia Social:** A diferencia de lo financiero, el capital humano se presentó como la mayor fortaleza. Con una satisfacción promedio de **7.52** y paridad en liderazgo, la empresa mantiene una rotación controlada, evitando costos ocultos de reemplazo de personal.
+
+#### 9.2 Recomendaciones Estratégicas (Plan de Acción)
+
+Basado en la evidencia de los datos, se propone la siguiente hoja de ruta priorizada:
+
+- **Prioridad 1 (Corto Plazo): Desacople Energético.** Invertir en recambio de maquinaria y luminaria LED. El objetivo es romper la correlación lineal entre producción y consumo de energía.
+- **Prioridad 2 (Mediano Plazo): Flexibilización de Costos.** Revisar la estructura de gastos fijos para permitir una adaptación más ágil ante la estacionalidad de la demanda (especialmente en Q1 y Q4).
+- **Prioridad 3 (Continuidad): Capitalización de Marca Empleadora.** Utilizar los altos índices de satisfacción y equidad como herramienta de atracción de talento para mantener bajos los costos de contratación.
+
+#### 9.3 Impacto Proyectado
+
+La implementación de las medidas de eficiencia operativa tiene un potencial de ahorro estimado de **\$350k anuales**, lo que permitiría recuperar los niveles de margen neto del año anterior sin necesidad de incrementar el volumen de ventas.
