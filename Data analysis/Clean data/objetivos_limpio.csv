@@ -1,0 +1,19 @@
+id_objetivo,categoria_esg,kpi_nombre,descripcion_objetivo,unidad_medida,valor_objetivo,anio_objetivo
+1,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.3,2023
+2,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,20.0,2023
+3,Social,Rotación,Tasa de rotación anual máxima,%,0.15,2023
+4,Social,Equidad,Mujeres en liderazgo,Cantidad,8.0,2023
+5,Gobernanza,Capacitación Ética,Porcentaje empleados capacitados,%,80.0,2023
+6,Financiero,Margen Neto,Margen neto objetivo,%,0.25,2023
+7,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.4,2024
+8,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,18.0,2024
+9,Social,Rotación,Máxima rotación anual,%,0.12,2024
+10,Social,Equidad,Mujeres en liderazgo,Cantidad,10.0,2024
+11,Gobernanza,Capacitación Ética,Porcentaje empleados capacitados,%,90.0,2024
+12,Financiero,Margen Neto,Margen objetivo,%,0.3,2024
+13,Ambiental,Tasa Reciclaje,% residuos reciclados,%,0.5,2025
+14,Ambiental,Huella Carbono,Toneladas CO2e promedio diario,tCO2e,15.0,2025
+15,Social,Rotación,Rotación anual máxima,%,0.1,2025
+16,Social,Equidad,Mujeres en liderazgo,Cantidad,12.0,2025
+17,Gobernanza,Capacitación Ética,Porcentaje capacitados,%,95.0,2025
+18,Financiero,Margen Neto,Meta de margen neto,%,0.35,2025
