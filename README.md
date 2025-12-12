@@ -463,7 +463,8 @@ El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegac
   - **Objetivo:** Ofrecer una visión holística inmediata.
   - **Componentes Clave:** Consolida KPIs de Finanzas, Huella de Carbono, Satisfacción y Reciclaje. Incluye indicadores de variación interanual (YoY) y semáforos de cumplimiento de objetivos.
   - **Análisis Destacado:** Un gráfico de dispersión (Scatter Plot) que cruza _Consumo Energético vs. Margen Neto_, evidenciando la correlación operativa.
-  - ![Pantalla - Resumen Ejecutivo](./BI Analyst/tablero/resumen_Ejecutivo.jpg)
+  - ![Pantalla - Resumen Ejecutivo](./BI Analyst/tablero/resumen_Ejecutivo.JPG)
+
     
 - **Nivel 2: Análisis Financiero (Profundidad):**
   - **Objetivo:** Desglosar la rentabilidad.
