@@ -463,17 +463,27 @@ El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegac
   - **Objetivo:** Ofrecer una visión holística inmediata.
   - **Componentes Clave:** Consolida KPIs de Finanzas, Huella de Carbono, Satisfacción y Reciclaje. Incluye indicadores de variación interanual (YoY) y semáforos de cumplimiento de objetivos.
   - **Análisis Destacado:** Un gráfico de dispersión (Scatter Plot) que cruza _Consumo Energético vs. Margen Neto_, evidenciando la correlación operativa.
+ 
+  
   ![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/resumen_Ejecutivo.JPG)
     
 - **Nivel 2: Análisis Financiero (Profundidad):**
   - **Objetivo:** Desglosar la rentabilidad.
   - **Visuales:** Gráfico de cascada para entender la acumulación mensual del resultado y análisis de líneas para contrastar la rigidez de los costos operativos frente a la volatilidad de los ingresos.
+ 
+    ![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/Analisis_Financiero.JPG)
+    
 - **Nivel 3: Impacto ESG (Sostenibilidad):**
   - **Objetivo:** Monitorear el desempeño no financiero.
   - **Visuales:** Gráfico de "Dinámica de Rotación" (Barras) para validar la retención de talento y Gráfico de Anillo para monitorear la paridad de género en liderazgo.
+ 
+![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/Impacto-ESG.JPG)
+
 - **Nivel 4: Plan de Acción (Toma de Decisiones):**
   - **Objetivo:** Traducir datos en estrategia.
   - **Componentes:** Un resumen visual de Fortalezas, Riesgos y Alertas, junto con una proyección económica del impacto de las mejoras sugeridas.
+
+![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/Conclusiones.JPG)
 
 #### 8.3 Lógica de Negocio Aplicada (DAX)
 
