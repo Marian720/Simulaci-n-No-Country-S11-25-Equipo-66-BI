@@ -471,7 +471,7 @@ El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegac
   - **Objetivo:** Desglosar la rentabilidad.
   - **Visuales:** Gráfico de cascada para entender la acumulación mensual del resultado y análisis de líneas para contrastar la rigidez de los costos operativos frente a la volatilidad de los ingresos.
  
-    ![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/Analisis_Financiero.JPG)
+![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/Analisis_Financiero.JPG)
     
 - **Nivel 3: Impacto ESG (Sostenibilidad):**
   - **Objetivo:** Monitorear el desempeño no financiero.
