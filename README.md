@@ -453,18 +453,18 @@ Decisión: Se eliminó el registro que contenía el valor atípico, dado que est
 
 ---
 
-## 8. Entregable 3 - Implementación del Dashboard (Visualización)
+### 8. Entregable 3 - Implementación del Dashboard (Visualización)
 
-### 8.1 Estrategia de Diseño y Navegación
+#### 8.1 Estrategia de Diseño y Navegación
 El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegación con un menú lateral fijo que permite el flujo fluido entre cuatro niveles de análisis. Se priorizó un diseño limpio (fondo blanco, tarjetas) y el uso semántico del color (**Verde/Rojo**) para alertas inmediatas.
 
-### 8.2 Estructura del Informe
+#### 8.2 Estructura del Informe
 Para todas las pantallas utilizamos lo siguiente:
 
 * **Segmentación Temporal (Filtros):** Se incorporaron segmentadores de datos (*Slicers*) jerárquicos en la parte superior derecha (Año, Trimestre, Mes). Esto otorga al usuario el control total para navegar desde una visión anual histórica hasta el detalle mensual específico.
 * **Respuesta Visual (Semáforos):** Los indicadores principales responden dinámicamente a esta selección temporal. Se aplicaron semáforos condicionales que recalculan el estado (**Verde/Rojo**) y la variación porcentual en tiempo real según el periodo filtrado, permitiendo identificar rápidamente si los objetivos se cumplieron en el recorte de tiempo seleccionado.
 
-### 8.3 Pantalla 1: Resumen Ejecutivo
+#### 8.3 Pantalla 1: Resumen Ejecutivo
 * **Objetivo:** Proporcionar una "foto instantánea" del estado de salud integral de la compañía (Económico, Ambiental y Social).
 * **Decisión de Diseño:**
     * **Enfoque de Triple Impacto:** Se seleccionaron 4 KPIs superiores que cubren las tres dimensiones sostenibles, permitiendo detectar alertas en cualquiera de los frentes.
@@ -474,7 +474,7 @@ Para todas las pantallas utilizamos lo siguiente:
   
   ![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/resumen_Ejecutivo.JPG)
     
-### 8.4 Pantalla 2: Análisis Financiero
+#### 8.4 Pantalla 2: Análisis Financiero
 **Objetivo:** Permitir un nivel de profundidad mayor (*Drill-down*) para entender la composición del resultado mes a mes y detectar ineficiencias puntuales que no son visibles en el resumen general.
 
 **Decisiones de Diseño y Selección de Visuales:**
@@ -497,7 +497,7 @@ Para todas las pantallas utilizamos lo siguiente:
  
 ![Pantalla - Analisis Financiero](./BI%20Analyst/tablero/Analisis-Financiero.JPG)
     
-### 8.5 Pantalla 3: Impacto ESG
+#### 8.5 Pantalla 3: Impacto ESG
 **Objetivo:** Monitorear el desempeño de la organización en métricas no financieras (Ambientales, Sociales y de Gobernanza) para asegurar que la rentabilidad económica no comprometa la sostenibilidad a largo plazo ni el clima laboral.
 
 **Decisiones de Diseño y Selección de Visuales:**
@@ -518,7 +518,7 @@ Para todas las pantallas utilizamos lo siguiente:
 
 ---
 
-## 9\. Entregable 4 - Hallazgos, Conclusiones y Recomendaciones
+### 9\. Entregable 4 - Hallazgos, Conclusiones y Recomendaciones
 
 #### 9.1 Diagnóstico Integral del Negocio
 
