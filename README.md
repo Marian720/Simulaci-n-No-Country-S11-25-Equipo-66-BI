@@ -449,7 +449,7 @@ Decisión: Se eliminó el registro que contenía el valor atípico, dado que est
 
 - **Eliminación de columnas auxiliares:** La columna **valor_ejemplo** fue eliminada debido a que no representaba datos reales medidos ni objetivos oficiales, sino valores referenciales que podrían generar confusión en el análisis.
 
-* **Datos y Desarrollo:** Python, [Jupyter Notebook (Ver Código)](https://github.com/Marian720/Simulaci-n-No-Country-S11-25-Equipo-66-BI/blob/main/Data%20analysis/Notebooks/limpieza%20inicial.ipynb), Google Colab
+* **Datos y Desarrollo:** Python, [Jupyter Notebook (Ver Código)](https://github.com/Marian720/Simulaci-n-No-Country-S11-25-Equipo-66-BI/blob/main/Data%20analysis/Notebooks/limpieza%20inicial.ipynb)
 
 ---
 
