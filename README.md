@@ -451,43 +451,68 @@ Decisión: Se eliminó el registro que contenía el valor atípico, dado que est
 
 ---
 
-## 8\. Entregable 3 - Implementación del Dashboard (Visualización)
+## 8. Entregable 3 - Implementación del Dashboard (Visualización)
 
-#### 8.1 Estrategia de Diseño y Navegación
+### 8.1 Estrategia de Diseño y Navegación
+El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegación con un menú lateral fijo que permite el flujo fluido entre cuatro niveles de análisis. Se priorizó un diseño limpio (fondo blanco, tarjetas) y el uso semántico del color (**Verde/Rojo**) para alertas inmediatas.
 
-El dashboard fue desarrollado en Power BI utilizando una arquitectura de navegación con un menú lateral fijo que permite el flujo fluido entre cuatro niveles de análisis. Se priorizó un diseño limpio (fondo blanco, tarjetas) y el uso semántico del color (Verde/Rojo) para alertas inmediatas.
+### 8.2 Estructura del Informe
+Para todas las pantallas utilizamos lo siguiente:
 
-#### 8.2 Estructura del Informe
+* **Segmentación Temporal (Filtros):** Se incorporaron segmentadores de datos (*Slicers*) jerárquicos en la parte superior derecha (Año, Trimestre, Mes). Esto otorga al usuario el control total para navegar desde una visión anual histórica hasta el detalle mensual específico.
+* **Respuesta Visual (Semáforos):** Los indicadores principales responden dinámicamente a esta selección temporal. Se aplicaron semáforos condicionales que recalculan el estado (**Verde/Rojo**) y la variación porcentual en tiempo real según el periodo filtrado, permitiendo identificar rápidamente si los objetivos se cumplieron en el recorte de tiempo seleccionado.
 
-- **Nivel 1: Resumen Ejecutivo (Tablero de Mando):**
-  - **Objetivo:** Ofrecer una visión holística inmediata.
-  - **Componentes Clave:** Consolida KPIs de Finanzas, Huella de Carbono, Satisfacción y Reciclaje. Incluye indicadores de variación interanual (YoY) y semáforos de cumplimiento de objetivos.
-  - **Análisis Destacado:** Un gráfico de dispersión (Scatter Plot) que cruza _Consumo Energético vs. Margen Neto_, evidenciando la correlación operativa.
+### 8.3 Pantalla 1: Resumen Ejecutivo
+* **Objetivo:** Proporcionar una "foto instantánea" del estado de salud integral de la compañía (Económico, Ambiental y Social).
+* **Decisión de Diseño:**
+    * **Enfoque de Triple Impacto:** Se seleccionaron 4 KPIs superiores que cubren las tres dimensiones sostenibles, permitiendo detectar alertas en cualquiera de los frentes.
+    * **Análisis de Estructura (Gráfico de Líneas):** Visualiza la evolución de *Ingresos vs. Costos*, revelando la rigidez estructural (línea de costos plana) frente a la volatilidad de las ventas.
+    * **Correlación (Gráfico de Dispersión):** Cruza *Consumo Energético vs. Margen Neto* para confirmar la hipótesis de ineficiencia operativa (crecimiento "caro").
  
   
   ![Pantalla - Resumen Ejecutivo](./BI%20Analyst/tablero/resumen_Ejecutivo.JPG)
     
-- **Nivel 2: Análisis Financiero (Profundidad):**
-  - **Objetivo:** Desglosar la rentabilidad.
-  - **Visuales:** Gráfico de cascada para entender la acumulación mensual del resultado y análisis de líneas para contrastar la rigidez de los costos operativos frente a la volatilidad de los ingresos.
+### 8.4 Pantalla 2: Análisis Financiero
+**Objetivo:** Permitir un nivel de profundidad mayor (*Drill-down*) para entender la composición del resultado mes a mes y detectar ineficiencias puntuales que no son visibles en el resumen general.
+
+**Decisiones de Diseño y Selección de Visuales:**
+
+1.  **Desglose de Eficiencia (KPIs Específicos):**
+    * **Decisión:** Se mantuvieron los indicadores de Ingresos y Margen para contexto, pero se añadió el **Ratio de Costos (0.54)** como métrica central de esta vista.
+    * **Insight Revelado:** Este indicador, resaltado con su variación interanual (+11.36%), valida matemáticamente la hipótesis de la "pesadez estructural": la empresa gasta 54 centavos por cada dólar que ingresa, un aumento significativo respecto al año anterior.
+
+2.  **Análisis de Acumulación (Gráfico de Cascada - Izquierda):**
+    * **Decisión:** Se implementó un Gráfico de Cascada (*Waterfall Chart*) para visualizar cómo se construye la ganancia anual mes a mes.
+    * **Insight Revelado:** A diferencia de un gráfico de barras común, la cascada muestra que **todos los meses aportaron resultado positivo** (barras verdes). Esto es un hallazgo crítico: descarta problemas operativos graves (no hubo meses de pérdida) y confirma que el problema es sistémico (costos fijos altos) y no estacional.
+
+3.  **Correlación Volumen vs. Rentabilidad (Gráfico Combinado - Derecha):**
+    * **Decisión:** Se utilizó un gráfico combinado de Columnas y Líneas para cruzar dos magnitudes diferentes: Volumen de Ventas (Barras Verdes) vs. Porcentaje de Margen (Línea Roja).
+    * **Insight Revelado:** Permite observar visualmente si los picos de venta se traducen en mayor rentabilidad porcentual, o si el margen se diluye al intentar vender más.
+
+4.  **Transparencia de Datos (Tabla Matriz - Inferior Izquierda):**
+    * **Decisión:** Se incluyó una tabla detallada con formato condicional en las columnas clave.
+    * **Funcionalidad:** Otorga al usuario analítico el acceso al dato "crudo" y exacto, permitiendo validar los cálculos de los gráficos superiores y exportar la información si fuera necesario.
  
 ![Pantalla - Analisis Financiero](./BI%20Analyst/tablero/Analisis-Financiero.JPG)
     
-- **Nivel 3: Impacto ESG (Sostenibilidad):**
-  - **Objetivo:** Monitorear el desempeño no financiero.
-  - **Visuales:** Gráfico de "Dinámica de Rotación" (Barras) para validar la retención de talento y Gráfico de Anillo para monitorear la paridad de género en liderazgo.
+### 8.5 Pantalla 3: Impacto ESG
+**Objetivo:** Monitorear el desempeño de la organización en métricas no financieras (Ambientales, Sociales y de Gobernanza) para asegurar que la rentabilidad económica no comprometa la sostenibilidad a largo plazo ni el clima laboral.
+
+**Decisiones de Diseño y Selección de Visuales:**
+
+1.  **Visión Integral de Sostenibilidad (KPIs Contextualizados):**
+    * **Decisión:** Se seleccionaron 4 indicadores balanceados: dos ambientales (Huella de Carbono y Agua) y dos sociales (Satisfacción y Ética).
+    * **Insight Revelado:** Al comparar con el año anterior, detectamos mejoras de eficiencia ambiental (reducción de huella y consumo de agua en verde) y una alta Satisfacción del Empleado (7.52). Sin embargo, el semáforo rojo en **"Capacitación Ética" (-1.93%)** actúa como una alerta temprana de cumplimiento normativo (*Compliance*).
+
+2.  **Dinámica de Talento (Gráfico Combinado - Izquierda):**
+    * **Decisión:** Para visualizar la retención, no bastaba con un número fijo. Se diseñó un gráfico combinado que muestra las **Contrataciones** (Barras Verdes) contra las **Bajas** (Barras Grises) y la **Rotación Neta** (Línea Roja).
+    * **Insight Revelado:** El gráfico titula "Retención de talento estable con saldo positivo". Visualmente se observa que las barras verdes superan sistemáticamente a las grises, confirmando que la empresa está creciendo en capital humano y que la rotación está controlada, lo cual es coherente con la alta satisfacción reportada.
+
+3.  **Diversidad e Inclusión (Gráfico de Anillos - Derecha):**
+    * **Decisión:** Se utilizó un gráfico de anillos (*Donut Chart*) para representar la composición binaria del liderazgo (Hombres vs. Mujeres).
+    * **Insight Revelado:** Este gráfico confirma visualmente un logro estratégico: la **paridad de género** es prácticamente exacta (50.11% vs 49.89%). La elección de este gráfico permite validar de un vistazo el cumplimiento de las políticas de diversidad de la empresa.
  
 ![Pantalla - Impacto ESG](./BI%20Analyst/tablero/Impacto-ESG.JPG)
-
-- **Nivel 4: Plan de Acción (Toma de Decisiones):**
-  - **Objetivo:** Traducir datos en estrategia.
-  - **Componentes:** Un resumen visual de Fortalezas, Riesgos y Alertas, junto con una proyección económica del impacto de las mejoras sugeridas.
-
-![Pantalla - Conclusiones](./BI%20Analyst/tablero/Conclusiones.JPG)
-
-#### 8.3 Lógica de Negocio Aplicada (DAX)
-
-Se implementaron medidas de inteligencia de tiempo para calcular variaciones históricas (_Year-over-Year_) respetando la granularidad de los filtros. Se normalizaron unidades críticas (conversión de Kilos a Toneladas en Huella de Carbono) para asegurar la comparabilidad con los objetivos internacionales.
 
 ---
 
@@ -512,3 +537,5 @@ Basado en la evidencia de los datos, se propone la siguiente hoja de ruta priori
 #### 9.3 Impacto Proyectado
 
 La implementación de las medidas de eficiencia operativa tiene un potencial de ahorro estimado de **\$350k anuales**, lo que permitiría recuperar los niveles de margen neto del año anterior sin necesidad de incrementar el volumen de ventas.
+
+![Pantalla - Conclusiones](./BI%20Analyst/tablero/Conclusiones.JPG)
